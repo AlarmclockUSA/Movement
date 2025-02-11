@@ -2,6 +2,151 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes gradient-reverse {
+  0% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes gradient-text {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  animation: gradient 30s ease infinite;
+}
+
+.animate-gradient-reverse {
+  animation: gradient-reverse 40s ease infinite;
+}
+
+.animate-gradient-text {
+  animation: gradient-text 8s ease infinite;
+}
+
+.button-gradient-1 {
+  animation: gradient 12s ease infinite;
+}
+
+.button-gradient-1:hover {
+  animation-play-state: paused;
+}
+
+.button-gradient-2 {
+  animation: gradient 18s ease infinite;
+}
+
+.button-gradient-2:hover {
+  animation-play-state: paused;
+}
+
+.button-gradient-3 {
+  animation: gradient 15s ease infinite;
+}
+
+.button-gradient-3:hover {
+  animation-play-state: paused;
+}
+
+.button-gradient-4 {
+  animation: gradient 20s ease infinite;
+}
+
+.button-gradient-4:hover {
+  animation-play-state: paused;
+}
+
+.button-gradient {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.gradient-button::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: url("/Brilliant Gradient Pack-07.jpg") no-repeat center center;
+  background-size: 150% 150%;
+  animation: gradient 15s ease infinite;
+  z-index: -1;
+}
+
+.button-gradient:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+  transition: all 0.3s ease;
+}
+
+.feature-box-gradient {
+  position: relative;
+  isolation: isolate;
+}
+
+.feature-box-gradient::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  background: url("/Brilliant Gradient Pack-07.jpg") no-repeat center center;
+  background-size: 400%;
+  border-radius: 1.2rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: gradient 15s ease infinite;
+  z-index: 2;
+  mix-blend-mode: soft-light;
+}
+
+.feature-box-gradient:hover::before {
+  opacity: 0.4;
+}
+
+.feature-box-content {
+  position: relative;
+  height: 100%;
+  background: #000;
+  border-radius: 1rem;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
