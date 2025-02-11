@@ -3,6 +3,51 @@ import { collection, onSnapshot, query, orderBy, limit, where } from 'firebase/f
 import { db } from '@/lib/firebase';
 import type { Event } from '@/types/event';
 
+function getFirstMondayDate(month: number, year: number): { day: string; month: string } {
+  const date = new Date(year, month, 1);
+  const dayOfWeek = date.getDay();
+  const daysUntilMonday = (dayOfWeek <= 1) ? 1 - dayOfWeek : 8 - dayOfWeek;
+  date.setDate(1 + daysUntilMonday);
+  
+  return {
+    day: date.getDate().toString().padStart(2, '0'),
+    month: date.toLocaleString('en-US', { month: 'short' }).toUpperCase()
+  };
+}
+
+function processRecurringEvent(event: Event): Event {
+  if (!event.recurring || !event.recurring.enabled) return event;
+
+  const today = new Date();
+  const currentMonth = today.getMonth();
+  const currentYear = today.getFullYear();
+  
+  // For monthly recurring events on first Monday
+  if (event.recurring.type === 'monthly' && 
+      event.recurring.dayOfWeek === 1 && 
+      event.recurring.weekOfMonth === 1) {
+    
+    // Get the next occurrence
+    let nextDate = getFirstMondayDate(currentMonth, currentYear);
+    const nextDateObj = new Date(currentYear, currentMonth, parseInt(nextDate.day));
+    
+    // If this month's date has passed, get next month's date
+    if (nextDateObj < today) {
+      nextDate = getFirstMondayDate(
+        currentMonth + 1 === 12 ? 0 : currentMonth + 1,
+        currentMonth + 1 === 12 ? currentYear + 1 : currentYear
+      );
+    }
+    
+    return {
+      ...event,
+      date: nextDate
+    };
+  }
+  
+  return event;
+}
+
 export function useEvents(eventLimit: number = 5) {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
@@ -26,24 +71,21 @@ export function useEvents(eventLimit: number = 5) {
           ...doc.data()
         })) as Event[];
         
-        // Filter out past events
+        // Process recurring events and filter out past events
         const currentDate = new Date();
         const currentMonth = currentDate.toLocaleString('en-US', { month: 'short' }).toUpperCase();
         const currentDay = currentDate.getDate().toString().padStart(2, '0');
         
-        const futureEvents = eventsData.filter(event => {
-          // Convert month strings to numbers for comparison
+        const processedEvents = eventsData.map(processRecurringEvent);
+        
+        const futureEvents = processedEvents.filter(event => {
           const eventMonth = event.date.month;
           const eventDay = parseInt(event.date.day);
           
-          // If event is in a future month
           if (eventMonth > currentMonth) return true;
-          
-          // If event is in current month, check the day
           if (eventMonth === currentMonth) {
             return eventDay >= parseInt(currentDay);
           }
-          
           return false;
         });
         

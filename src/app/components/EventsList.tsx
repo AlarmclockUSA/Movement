@@ -1,6 +1,7 @@
 'use client';
 
 import { useEvents } from '@/hooks/useEvents';
+import Link from 'next/link';
 
 export default function EventsList() {
   const { events, loading, error } = useEvents(5);
@@ -58,32 +59,55 @@ export default function EventsList() {
         </div>
 
         <div className="space-y-6">
-          {events.map((event) => (
-            <div 
-              key={event.id}
-              className="group flex items-center justify-between py-6 border-t border-gray-200 hover:bg-white transition-colors duration-300 px-4 -mx-4 cursor-pointer"
-            >
-              <div className="flex items-center space-x-12">
-                <div className="w-24 text-center">
-                  <div className="text-4xl font-bold">{event.date.day}</div>
-                  <div className="text-sm text-gray-500 uppercase">{event.date.month}</div>
+          {events.map((event) => {
+            // Determine if this should be a Link or anchor based on routing
+            const EventWrapper = ({ children }: { children: React.ReactNode }) => {
+              // Default to using the default event page if routing is not specified
+              const useDefault = event.routing?.useDefault ?? true;
+              const externalUrl = event.routing?.externalUrl;
+
+              if (useDefault) {
+                return (
+                  <Link href={`/events/${event.id}`} className="block">
+                    {children}
+                  </Link>
+                );
+              }
+              return (
+                <a 
+                  href={externalUrl || '#'} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="block"
+                >
+                  {children}
+                </a>
+              );
+            };
+
+            return (
+              <EventWrapper key={event.id}>
+                <div className="group flex items-center justify-between py-6 border-t border-gray-200 hover:bg-white transition-colors duration-300 px-4 -mx-4">
+                  <div className="flex items-center space-x-12">
+                    <div className="w-24 text-center">
+                      <div className="text-4xl font-bold">{event.date.day}</div>
+                      <div className="text-sm text-gray-500 uppercase">{event.date.month}</div>
+                    </div>
+                    <div className="max-w-xl">
+                      <h3 className="text-xl font-bold mb-1">{event.title}</h3>
+                      <p className="text-gray-600 mb-2">{event.time}</p>
+                      <p className="text-gray-500 text-sm leading-relaxed">{event.description}</p>
+                    </div>
+                  </div>
+                  <div className="transform translate-x-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
+                    </svg>
+                  </div>
                 </div>
-                <div className="max-w-xl">
-                  <h3 className="text-xl font-bold mb-1">{event.title}</h3>
-                  <p className="text-gray-600 mb-2">{event.time}</p>
-                  <p className="text-gray-500 text-sm leading-relaxed">{event.description}</p>
-                </div>
-              </div>
-              <a 
-                href={event.link}
-                className="transform translate-x-4 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
-                </svg>
-              </a>
-            </div>
-          ))}
+              </EventWrapper>
+            );
+          })}
         </div>
       </div>
     </div>

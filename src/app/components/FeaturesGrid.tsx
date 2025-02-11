@@ -1,9 +1,12 @@
 'use client';
 
 import { useRef } from 'react';
+import { useFeatures } from '@/hooks/useFeatures';
+import Link from 'next/link';
 
 export default function FeaturesGrid() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { features, loading, error } = useFeatures();
 
   const scrollPrev = () => {
     if (containerRef.current) {
@@ -16,6 +19,38 @@ export default function FeaturesGrid() {
       containerRef.current.scrollBy({ left: 400, behavior: 'smooth' });
     }
   };
+
+  if (loading) {
+    return (
+      <div className="py-24 bg-gray-50 overflow-hidden relative">
+        <div className="px-8">
+          <div className="flex overflow-x-auto pb-8 space-x-6 no-scrollbar">
+            {[1, 2, 3].map((index) => (
+              <div key={index} className="w-[400px] flex-shrink-0 h-[500px] animate-pulse">
+                <div className="h-full bg-gray-200 rounded-2xl"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="py-24 bg-gray-50 overflow-hidden relative">
+        <div className="px-8">
+          <div className="text-center text-gray-600">
+            Failed to load features. Please try again later.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (features.length === 0) {
+    return null;
+  }
 
   return (
     <div className="py-24 bg-gray-50 overflow-hidden relative">
@@ -41,100 +76,28 @@ export default function FeaturesGrid() {
         </button>
 
         <div ref={containerRef} className="flex overflow-x-auto pb-8 space-x-6 no-scrollbar scroll-smooth snap-x snap-mandatory">
-          {/* Gatherings */}
-          <div className="group relative overflow-hidden rounded-2xl w-[400px] flex-shrink-0 h-[500px] feature-box-gradient bg-[#1a1a1a] snap-start">
-            <div className="feature-box-content">
-              <img 
-                src="https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=2670&auto=format&fit=crop"
-                alt="Monthly Gatherings" 
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-60"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
-              <div className="absolute bottom-0 left-0 right-0 p-12">
-                <h3 className="text-3xl font-bold text-white mb-3">Monthly Gatherings</h3>
-                <p className="text-gray-300 mb-6 text-lg">Experience powerful worship and teaching every first Monday</p>
-                <a href="/gatherings" className="inline-flex items-center text-white font-medium text-lg hover:opacity-80 transition-opacity">
-                  Join Us <span className="ml-2 transition-transform group-hover:translate-x-1">→</span>
-                </a>
+          {features.map((feature) => (
+            <div key={feature.id} className="group relative overflow-hidden rounded-2xl w-[400px] flex-shrink-0 h-[500px] feature-box-gradient bg-[#1a1a1a] snap-start">
+              <div className="feature-box-content">
+                <img 
+                  src={feature.image.url}
+                  alt={feature.image.alt} 
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-60"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
+                <div className="absolute bottom-0 left-0 right-0 p-12">
+                  <h3 className="text-3xl font-bold text-white mb-3">{feature.title}</h3>
+                  <p className="text-gray-300 mb-6 text-lg">{feature.description}</p>
+                  <Link 
+                    href={feature.link.url} 
+                    className="inline-flex items-center text-white font-medium text-lg hover:opacity-80 transition-opacity"
+                  >
+                    {feature.link.text} <span className="ml-2 transition-transform group-hover:translate-x-1">→</span>
+                  </Link>
+                </div>
               </div>
             </div>
-          </div>
-
-          {/* Small Groups */}
-          <div className="group relative overflow-hidden rounded-2xl w-[400px] flex-shrink-0 h-[500px] feature-box-gradient bg-[#1a1a1a] snap-start">
-            <div className="feature-box-content">
-              <img 
-                src="https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=2574&auto=format&fit=crop"
-                alt="Small Groups" 
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-60"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
-              <div className="absolute bottom-0 left-0 right-0 p-12">
-                <h3 className="text-3xl font-bold text-white mb-3">Small Groups</h3>
-                <p className="text-gray-300 mb-6 text-lg">Connect deeply in our intimate online communities</p>
-                <a href="/groups" className="inline-flex items-center text-white font-medium text-lg hover:opacity-80 transition-opacity">
-                  Find Your Group <span className="ml-2 transition-transform group-hover:translate-x-1">→</span>
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Brilliant Plus */}
-          <div className="group relative overflow-hidden rounded-2xl w-[400px] flex-shrink-0 h-[500px] feature-box-gradient bg-[#1a1a1a] snap-start">
-            <div className="feature-box-content">
-              <img 
-                src="https://images.unsplash.com/photo-1501516069922-a9982bd6f3bd?q=80&w=2574&auto=format&fit=crop"
-                alt="Brilliant Plus" 
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-60"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
-              <div className="absolute bottom-0 left-0 right-0 p-12">
-                <h3 className="text-3xl font-bold text-white mb-3">Brilliant Plus</h3>
-                <p className="text-gray-300 mb-6 text-lg">Daily devotionals and spiritual growth resources</p>
-                <a href="/plus" className="inline-flex items-center text-white font-medium text-lg hover:opacity-80 transition-opacity">
-                  Start Your Journey <span className="ml-2 transition-transform group-hover:translate-x-1">→</span>
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Live Events */}
-          <div className="group relative overflow-hidden rounded-2xl w-[400px] flex-shrink-0 h-[500px] feature-box-gradient bg-[#1a1a1a] snap-start">
-            <div className="feature-box-content">
-              <img 
-                src="https://images.unsplash.com/photo-1527529482837-4698179dc6ce?q=80&w=2670&auto=format&fit=crop"
-                alt="Live Events" 
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-60"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
-              <div className="absolute bottom-0 left-0 right-0 p-12">
-                <h3 className="text-3xl font-bold text-white mb-3">Live Events</h3>
-                <p className="text-gray-300 mb-6 text-lg">Transformative conferences and workshops</p>
-                <a href="/events" className="inline-flex items-center text-white font-medium text-lg hover:opacity-80 transition-opacity">
-                  View Calendar <span className="ml-2 transition-transform group-hover:translate-x-1">→</span>
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Business */}
-          <div className="group relative overflow-hidden rounded-2xl w-[400px] flex-shrink-0 h-[500px] feature-box-gradient bg-[#1a1a1a] snap-start">
-            <div className="feature-box-content">
-              <img 
-                src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2670&auto=format&fit=crop"
-                alt="Business" 
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-60"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-black/20" />
-              <div className="absolute bottom-0 left-0 right-0 p-12">
-                <h3 className="text-3xl font-bold text-white mb-3">Business</h3>
-                <p className="text-gray-300 mb-6 text-lg">Kingdom principles for marketplace leaders</p>
-                <a href="/business" className="inline-flex items-center text-white font-medium text-lg hover:opacity-80 transition-opacity">
-                  Learn More <span className="ml-2 transition-transform group-hover:translate-x-1">→</span>
-                </a>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>

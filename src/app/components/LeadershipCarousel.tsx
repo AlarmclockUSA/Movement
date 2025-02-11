@@ -1,27 +1,61 @@
 'use client';
 
-const leaders = [
-  {
-    names: "Graham + Theresa Cooke",
-    description: "Graham is the Visionary Architect and Director of the Brilliant Movement, bringing decades of experience in prophetic ministry and leadership development. Theresa partners with Graham in ministry and brings a powerful perspective on living in God's presence daily.",
-    image: "/graham-theresa.jpg"
-  },
-  {
-    names: "Dionne + Bridget van Zyl",
-    description: "Dionne and Bridget serve as Executive Pastors of the Brilliant Movement, overseeing the day-to-day operations and spiritual direction of our community. They bring a passion for authentic community and transformational leadership to everything they do.",
-    image: "/dionne-bridget.jpg"
-  }
-];
+import { useTeam } from '@/hooks/useTeam';
 
 export default function LeadershipSection() {
+  const { team, loading, error } = useTeam();
+
+  // Filter for featured team members only
+  const featuredTeam = team.filter(member => member.featured);
+
+  if (loading) {
+    return (
+      <div className="py-24 bg-[#f5f5f3]">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-[5rem] font-bold mb-20 tracking-tight">Our Team</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            {[1, 2].map((index) => (
+              <div key={index} className="space-y-8 animate-pulse">
+                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gray-200" />
+                <div>
+                  <div className="h-8 bg-gray-200 rounded w-2/3 mb-6" />
+                  <div className="space-y-3">
+                    <div className="h-4 bg-gray-200 rounded w-full" />
+                    <div className="h-4 bg-gray-200 rounded w-5/6" />
+                    <div className="h-4 bg-gray-200 rounded w-4/6" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="py-24 bg-[#f5f5f3]">
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className="text-[5rem] font-bold mb-20 tracking-tight">Our Team</h2>
+          <p className="text-red-500">Failed to load team. Please try again later.</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (featuredTeam.length === 0) {
+    return null;
+  }
+
   return (
     <div className="py-24 bg-[#f5f5f3]">
       <div className="max-w-7xl mx-auto px-4">
         <h2 className="text-[5rem] font-bold mb-20 tracking-tight">Our Team</h2>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-          {leaders.map((leader, index) => (
-            <div key={leader.names} className="space-y-8">
+          {featuredTeam.map((leader) => (
+            <div key={leader.id} className="space-y-8">
               <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
                 <img 
                   src={leader.image}
@@ -41,7 +75,7 @@ export default function LeadershipSection() {
 
         <div className="mt-16 text-center">
           <a 
-            href="/leadership" 
+            href="/team" 
             className="relative overflow-hidden inline-block px-8 py-4 rounded-full text-lg font-medium button-gradient button-gradient-1"
             style={{
               background: 'url("/Brilliant Gradient Pack-07.jpg") no-repeat center center',

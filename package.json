@@ -7,11 +7,16 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "tsx src/scripts/seed.ts"
+    "seed": "tsx src/scripts/seed.ts",
+    "seed:team": "tsx src/scripts/seedTeam.ts",
+    "seed:features": "tsx src/scripts/seedFeatures.ts",
+    "seed:hero": "tsx src/scripts/seedHero.ts",
+    "seed:all": "npm run seed && npm run seed:team && npm run seed:features && npm run seed:hero"
   },
   "dependencies": {
     "firebase": "^11.3.0",
     "firebase-admin": "^13.1.0",
+    "framer-motion": "^12.4.2",
     "next": "15.1.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
