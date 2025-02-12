@@ -1,48 +1,37 @@
 export interface Event {
-  id?: string;
+  id: string;
   title: string;
   description: string;
-  longDescription?: string;
-  date: {
-    day: string;
-    month: string;
-  };
-  time: string;
+  startDate: string;
+  endDate: string;
+  imageUrl: string;
+  type: 'conference' | 'gathering' | 'workshop';
+  status: 'upcoming' | 'ongoing' | 'past';
   location: {
-    type: 'online' | 'physical' | 'hybrid';
-    url?: string;
+    type: 'virtual' | 'physical' | 'hybrid';
     address?: string;
     city?: string;
-    state?: string;
-    zipCode?: string;
+    country?: string;
   };
-  routing: {
-    useDefault: boolean; // If true, use the default event page, if false, use external link
-    externalUrl?: string; // Only used when useDefault is false
+  registrationUrl: string;
+  price?: {
+    amount: number;
+    currency: string;
   };
-  registration?: {
-    required: boolean;
-    url?: string;
-    deadline?: Date;
-    capacity?: number;
-  };
-  speakers?: Array<{
+  capacity?: number;
+  speakers?: {
+    id: string;
     name: string;
-    role?: string;
-    image?: string;
-  }>;
-  image?: {
-    url: string;
-    alt: string;
-  };
-  active: boolean;
-  recurring?: {
-    type: 'monthly';
-    dayOfWeek: number; // 1 for Monday
-    weekOfMonth: number; // 1 for first week
-    enabled: boolean;
-  };
-  createdAt?: Date;
-  updatedAt?: Date;
-  order?: number;
+    role: string;
+    imageUrl: string;
+  }[];
+  schedule?: {
+    date: string;
+    sessions: {
+      time: string;
+      title: string;
+      description: string;
+      speaker?: string;
+    }[];
+  }[];
 } 
