@@ -1,6 +1,5 @@
 import { initializeApp, getApps } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 
 if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
@@ -17,10 +16,10 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-const db = getFirestore(app);
-const auth = getAuth(app);
-const storage = getStorage(app);
+// Initialize Firebase for Data
+const dataApp = getApps().find(app => app.name === 'data') || 
+               initializeApp(firebaseConfig, 'data');
+const db = getFirestore(dataApp);
+const storage = getStorage(dataApp);
 
-export { app, db, auth, storage }; 
+export { dataApp, db, storage }; 

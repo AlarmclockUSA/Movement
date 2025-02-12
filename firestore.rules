@@ -2,37 +2,70 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow anyone to read hero messages
-    match /hero/{heroId} {
-      allow read: if true;  // Public read access
-      // Allow write access from admin SDK only
-      allow write: if request.auth != null && request.auth.token.admin == true;
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
 
-    // Allow anyone to read events
-    match /events/{eventId} {
-      allow read: if true;  // Public read access
-      // Allow write access from admin SDK
-      allow write: if request.auth != null && request.auth.token.admin == true;
-    }
-
-    // Allow anyone to read team members
-    match /team/{teamId} {
-      allow read: if true;  // Public read access
-      // Allow write access from admin SDK only
-      allow write: if request.auth != null && request.auth.token.admin == true;
-    }
-
-    // Allow anyone to read features
-    match /features/{featureId} {
-      allow read: if true;  // Public read access
-      // Allow write access from admin SDK only
-      allow write: if request.auth != null && request.auth.token.admin == true;
-    }
-
-    // Default deny all
+    // Base rules
     match /{document=**} {
-      allow read, write: if false;
+      allow read: if false;
+      allow write: if false;
+    }
+
+    // News collection rules
+    match /news/{newsId} {
+      // Anyone can read news articles
+      allow read: if true;
+      
+      // Only admins can create, update, or delete news
+      allow create, update, delete: if isAdmin();
+      
+      // Validate news article data
+      function isValidNewsArticle() {
+        let data = request.resource.data;
+        return data.title is string && data.title.size() > 0 &&
+               data.content is string && data.content.size() > 0 &&
+               data.slug is string && data.slug.size() > 0 &&
+               data.publishedAt is string &&
+               data.author.name is string &&
+               data.category in ['announcement', 'story', 'update', 'event'] &&
+               data.tags is list &&
+               data.featured is bool &&
+               data.excerpt is string &&
+               data.readTime is number && data.readTime > 0;
+      }
+    }
+
+    // Features collection rules
+    match /features/{feature} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Events collection rules
+    match /events/{eventId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Team collection rules
+    match /team/{member} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Users collection rules
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow write: if isAuthenticated() && request.auth.uid == userId;
+      allow create: if isAuthenticated();
     }
   }
 }

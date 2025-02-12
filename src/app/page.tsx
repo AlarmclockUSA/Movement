@@ -8,10 +8,7 @@ import { gatherings } from '@/data/gatherings';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import { useHero } from '@/hooks/useHero';
-import dynamic from 'next/dynamic';
 import FeaturedEvent from '@/components/FeaturedEvent';
-
-const Globe = dynamic(() => import('./components/Globe'), { ssr: false });
 
 export default function Home() {
   return (

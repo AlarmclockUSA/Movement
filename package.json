@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -11,24 +11,21 @@
     "seed:team": "tsx src/scripts/seedTeam.ts",
     "seed:features": "tsx src/scripts/seedFeatures.ts",
     "seed:hero": "tsx src/scripts/seedHero.ts",
-    "seed:all": "npm run seed && npm run seed:team && npm run seed:features && npm run seed:hero"
+    "seed:all": "npm run seed && npm run seed:team && npm run seed:features && npm run seed:hero",
+    "seed:news": "tsx src/scripts/seedNews.ts"
   },
   "dependencies": {
     "@fullcalendar/core": "^6.1.15",
     "@fullcalendar/daygrid": "^6.1.15",
     "@fullcalendar/interaction": "^6.1.15",
     "@fullcalendar/react": "^6.1.15",
-    "d3-geo": "^3.1.1",
     "date-fns": "^4.1.0",
     "firebase": "^11.3.0",
     "firebase-admin": "^13.1.0",
     "framer-motion": "^12.4.2",
     "next": "15.1.7",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-globe.gl": "^2.31.3",
-    "react-simple-maps": "^3.0.0",
-    "three": "^0.173.0"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

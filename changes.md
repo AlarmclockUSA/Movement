@@ -152,3 +152,18 @@
    - Eliminated redundant "Discover" from subheading
    - Maintained visual flow between headline and subheading
    - Enhanced clarity and readability 
+
+## Code Cleanup and Optimization
+1. Removed unnecessary components:
+   - Deleted WorldMap.tsx component
+   - Deleted Globe.tsx component
+   - Removed related imports from page.tsx
+2. Cleaned up dependencies:
+   - Removed react-simple-maps
+   - Removed react-globe.gl
+   - Removed three.js
+   - Removed d3-geo
+3. Updated package.json:
+   - Streamlined dependencies list
+   - Removed unused packages
+   - Maintained essential dependencies only 

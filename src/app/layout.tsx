@@ -49,23 +49,12 @@ export default function RootLayout({
               </div>
               <div className="hidden md:flex items-center space-x-8">
                 <a 
-                  href="/about" 
+                  href="/plus" 
                   className={`text-sm font-medium transition-all duration-300 relative group ${
                     isScrolled ? 'text-gray-800/80 hover:text-gray-900' : 'text-white/90 hover:text-white'
                   }`}
                 >
-                  About
-                  <span className={`absolute -bottom-1 left-0 w-0 h-[1px] transition-all duration-300 group-hover:w-full ${
-                    isScrolled ? 'bg-gradient-to-r from-gray-900/80 to-gray-900/60' : 'bg-gradient-to-r from-white to-white/80'
-                  }`} />
-                </a>
-                <a 
-                  href="/church" 
-                  className={`text-sm font-medium transition-all duration-300 relative group ${
-                    isScrolled ? 'text-gray-800/80 hover:text-gray-900' : 'text-white/90 hover:text-white'
-                  }`}
-                >
-                  Church
+                  BrilliantPlus
                   <span className={`absolute -bottom-1 left-0 w-0 h-[1px] transition-all duration-300 group-hover:w-full ${
                     isScrolled ? 'bg-gradient-to-r from-gray-900/80 to-gray-900/60' : 'bg-gradient-to-r from-white to-white/80'
                   }`} />
@@ -76,32 +65,43 @@ export default function RootLayout({
                     isScrolled ? 'text-gray-800/80 hover:text-gray-900' : 'text-white/90 hover:text-white'
                   }`}
                 >
-                  Leadership
+                  School of Leadership
                   <span className={`absolute -bottom-1 left-0 w-0 h-[1px] transition-all duration-300 group-hover:w-full ${
                     isScrolled ? 'bg-gradient-to-r from-gray-900/80 to-gray-900/60' : 'bg-gradient-to-r from-white to-white/80'
                   }`} />
                 </a>
                 <a 
-                  href="/give" 
+                  href="/groups" 
                   className={`text-sm font-medium transition-all duration-300 relative group ${
                     isScrolled ? 'text-gray-800/80 hover:text-gray-900' : 'text-white/90 hover:text-white'
                   }`}
                 >
-                  Give
+                  Small Groups
                   <span className={`absolute -bottom-1 left-0 w-0 h-[1px] transition-all duration-300 group-hover:w-full ${
                     isScrolled ? 'bg-gradient-to-r from-gray-900/80 to-gray-900/60' : 'bg-gradient-to-r from-white to-white/80'
                   }`} />
                 </a>
                 <a 
-                  href="/watch"
+                  href="/connect"
                   className="relative px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 group"
                 >
-                  <span className="relative z-10 text-white">Watch Online</span>
+                  <span className="relative z-10 text-white">Join the Movement</span>
                   <div className={`absolute inset-0 rounded-full transition-all duration-300 group-hover:scale-[1.02] ${
                     isScrolled ? 'bg-black' : 'bg-white/10 backdrop-blur-sm'
                   }`} />
                   <div className={`absolute inset-0 rounded-full opacity-0 transition-all duration-300 group-hover:opacity-100 ${
                     isScrolled ? 'bg-gradient-to-r from-black/80 to-gray-900' : 'bg-white/20'
+                  }`} />
+                </a>
+                <a 
+                  href="/login"
+                  className={`text-sm font-medium transition-all duration-300 relative group ${
+                    isScrolled ? 'text-gray-800/80 hover:text-gray-900' : 'text-white/90 hover:text-white'
+                  }`}
+                >
+                  Login
+                  <span className={`absolute -bottom-1 left-0 w-0 h-[1px] transition-all duration-300 group-hover:w-full ${
+                    isScrolled ? 'bg-gradient-to-r from-gray-900/80 to-gray-900/60' : 'bg-gradient-to-r from-white to-white/80'
                   }`} />
                 </a>
               </div>

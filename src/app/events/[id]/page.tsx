@@ -1,98 +1,95 @@
-'use client';
-
-import { useState, useEffect } from 'react';
+import { use } from 'react';
 import { Event } from '@/types/event';
 import { eventService } from '@/services/eventService';
-import { format } from 'date-fns';
+import { format, isValid, parseISO } from 'date-fns';
+import Link from 'next/link';
+import Image from 'next/image';
 
-export default function EventPage({ params }: { params: { id: string } }) {
-  const [event, setEvent] = useState<Event | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchEvent = async () => {
-      try {
-        const eventData = await eventService.getEventById(params.id);
-        setEvent(eventData);
-      } catch (error) {
-        console.error('Error fetching event:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEvent();
-  }, [params.id]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-white py-24">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="animate-pulse">
-            <div className="h-[400px] bg-gray-100 rounded-2xl mb-12" />
-            <div className="h-12 bg-gray-100 w-2/3 mb-6" />
-            <div className="h-6 bg-gray-100 w-1/3 mb-12" />
-            <div className="space-y-4">
-              <div className="h-4 bg-gray-100 w-full" />
-              <div className="h-4 bg-gray-100 w-5/6" />
-              <div className="h-4 bg-gray-100 w-4/6" />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+function formatDate(dateString: string | undefined) {
+  if (!dateString) return 'Date TBD';
+  try {
+    const date = parseISO(dateString);
+    if (!isValid(date)) {
+      return 'Date TBD';
+    }
+    return format(date, 'MMMM d, yyyy');
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return 'Date TBD';
   }
+}
+
+function capitalizeFirstLetter(str: string | undefined) {
+  if (!str) return '';
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+export default function EventPage({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
+  const event = use(eventService.getEventById(resolvedParams.id));
 
   if (!event) {
     return (
       <div className="min-h-screen bg-white py-24">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <h1 className="text-3xl font-bold text-gray-900 mb-4">Event Not Found</h1>
-          <p className="text-gray-600 mb-8">The event you're looking for doesn't exist or has been removed.</p>
-          <a 
+          <p className="text-gray-600 mb-8">The event you&apos;re looking for doesn&apos;t exist or has been removed.</p>
+          <Link 
             href="/events"
             className="inline-block px-6 py-3 bg-black text-white font-medium rounded-full hover:bg-gray-900 transition-colors"
           >
             View All Events
-          </a>
+          </Link>
         </div>
       </div>
     );
   }
 
+  const defaultImage = '/images/event-placeholder.jpg'; // Add a default image path
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <div className="relative h-[60vh] min-h-[500px] bg-black">
-        <img 
-          src={event.imageUrl}
-          alt={event.title}
-          className="w-full h-full object-cover opacity-70"
-        />
+        {event.imageUrl ? (
+          <Image 
+            src={event.imageUrl}
+            alt={event.title || 'Event image'}
+            fill
+            className="object-cover opacity-70"
+            priority
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-r from-gray-900 to-black" />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
         <div className="absolute inset-0 flex items-center">
           <div className="max-w-7xl mx-auto px-4 w-full">
             <div className="max-w-3xl">
-              <div className="inline-block px-3 py-1 bg-white text-black text-sm font-medium rounded-full mb-6">
-                {event.type.charAt(0).toUpperCase() + event.type.slice(1)}
-              </div>
+              {event.type && (
+                <div className="inline-block px-3 py-1 bg-white text-black text-sm font-medium rounded-full mb-6">
+                  {capitalizeFirstLetter(event.type)}
+                </div>
+              )}
               <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">{event.title}</h1>
               <div className="flex flex-wrap gap-4 text-white/90">
                 <div className="flex items-center">
                   <span className="text-lg">
-                    {format(new Date(event.startDate), 'MMMM d, yyyy')}
-                    {event.startDate !== event.endDate && 
-                      ` - ${format(new Date(event.endDate), 'MMMM d, yyyy')}`
+                    {formatDate(event.startDate)}
+                    {event.startDate !== event.endDate && event.endDate && 
+                      ` - ${formatDate(event.endDate)}`
                     }
                   </span>
                 </div>
-                <div className="flex items-center">
-                  <span className="text-lg">
-                    {event.location.type.charAt(0).toUpperCase() + event.location.type.slice(1)}
-                    {event.location.city && ` • ${event.location.city}`}
-                    {event.location.country && `, ${event.location.country}`}
-                  </span>
-                </div>
+                {event.location && (
+                  <div className="flex items-center">
+                    <span className="text-lg">
+                      {capitalizeFirstLetter(event.location.type)}
+                      {event.location.city && ` • ${event.location.city}`}
+                      {event.location.country && `, ${event.location.country}`}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -116,7 +113,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
                     {event.schedule.map((day, index) => (
                       <div key={index}>
                         <h3 className="text-xl font-bold mb-4">
-                          {format(new Date(day.date), 'EEEE, MMMM d')}
+                          {formatDate(day.date)}
                         </h3>
                         <div className="space-y-4">
                           {day.sessions.map((session, sessionIndex) => (
@@ -146,14 +143,20 @@ export default function EventPage({ params }: { params: { id: string } }) {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                     {event.speakers.map((speaker) => (
                       <div key={speaker.id} className="flex gap-4">
-                        <img 
-                          src={speaker.imageUrl}
-                          alt={speaker.name}
-                          className="w-16 h-16 rounded-full object-cover"
-                        />
+                        {speaker.imageUrl ? (
+                          <Image 
+                            src={speaker.imageUrl}
+                            alt={speaker.name}
+                            width={64}
+                            height={64}
+                            className="rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-16 h-16 rounded-full bg-gray-200" />
+                        )}
                         <div>
                           <h3 className="font-bold">{speaker.name}</h3>
-                          <p className="text-gray-600">{speaker.role}</p>
+                          {speaker.role && <p className="text-gray-600">{speaker.role}</p>}
                         </div>
                       </div>
                     ))}
@@ -184,21 +187,23 @@ export default function EventPage({ params }: { params: { id: string } }) {
                   </div>
                 )}
 
-                <a
-                  href={event.registrationUrl}
-                  className="block w-full py-4 px-8 bg-black text-white text-center font-medium rounded-full
-                           hover:bg-gray-900 transition-colors duration-300 mb-4"
-                >
-                  Register Now
-                </a>
+                {event.registrationUrl && (
+                  <Link
+                    href={event.registrationUrl}
+                    className="block w-full py-4 px-8 bg-black text-white text-center font-medium rounded-full
+                             hover:bg-gray-900 transition-colors duration-300 mb-4"
+                  >
+                    Register Now
+                  </Link>
+                )}
                 
-                <a
+                <Link
                   href="/events"
                   className="block w-full py-4 px-8 bg-white text-black text-center font-medium rounded-full
                            border border-black/10 hover:bg-gray-50 transition-colors duration-300"
                 >
                   View Other Events
-                </a>
+                </Link>
               </div>
             </div>
           </div>
