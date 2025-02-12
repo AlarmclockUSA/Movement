@@ -1,40 +1,51 @@
-import type { Metadata } from "next";
+'use client';
+
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { useState, useEffect } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
-
-export const metadata: Metadata = {
-  title: "Brilliant Movement",
-  description: "For God. For People. For the City. For the World.",
-};
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsScrolled(scrollPosition > window.innerHeight - 80); // 80px before the end of hero section
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // Check initial position
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <html lang="en">
       <body className={`${inter.className} bg-white`}>
-        <nav className="fixed w-full z-50 bg-white/90 backdrop-blur-md">
+        <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white' : 'bg-transparent'}`}>
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex justify-between h-20">
               <div className="flex items-center">
                 <a href="/" className="h-10">
                   <img 
-                    src="/Brilliant_Full-Color_Dark.png"
+                    src={isScrolled ? "/Brilliant_Full-Color_Dark.png" : "/Brilliant_Full-Color_White.png"}
                     alt="Brilliant"
                     className="h-full w-auto"
                   />
                 </a>
               </div>
               <div className="hidden md:flex items-center space-x-8">
-                <a href="/about" className="text-sm font-medium hover:text-gray-600 transition-colors">About</a>
-                <a href="/church" className="text-sm font-medium hover:text-gray-600 transition-colors">Church</a>
-                <a href="/leadership" className="text-sm font-medium hover:text-gray-600 transition-colors">Leadership</a>
-                <a href="/give" className="text-sm font-medium hover:text-gray-600 transition-colors">Give</a>
-                <button className="bg-black text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors">
+                <a href="/about" className={`text-sm font-medium transition-colors ${isScrolled ? 'text-gray-600 hover:text-gray-900' : 'text-white hover:text-white/80'}`}>About</a>
+                <a href="/church" className={`text-sm font-medium transition-colors ${isScrolled ? 'text-gray-600 hover:text-gray-900' : 'text-white hover:text-white/80'}`}>Church</a>
+                <a href="/leadership" className={`text-sm font-medium transition-colors ${isScrolled ? 'text-gray-600 hover:text-gray-900' : 'text-white hover:text-white/80'}`}>Leadership</a>
+                <a href="/give" className={`text-sm font-medium transition-colors ${isScrolled ? 'text-gray-600 hover:text-gray-900' : 'text-white hover:text-white/80'}`}>Give</a>
+                <button className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${isScrolled ? 'bg-black text-white hover:bg-gray-800' : 'bg-white text-black hover:bg-white/90'}`}>
                   Watch Online
                 </button>
               </div>
@@ -42,7 +53,7 @@ export default function RootLayout({
           </div>
         </nav>
         
-        <main className="pt-20">{children}</main>
+        <main>{children}</main>
         
         <footer className="bg-black text-white py-20">
           <div className="max-w-7xl mx-auto px-4">

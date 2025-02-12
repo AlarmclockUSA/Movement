@@ -11,23 +11,11 @@ import { useHero } from '@/hooks/useHero';
 
 export default function Home() {
   const { messages, loading, error } = useHero();
-  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
-
-  // Auto-advance carousel with longer interval
-  useEffect(() => {
-    if (messages.length === 0) return;
-    
-    const timer = setInterval(() => {
-      setCurrentMessageIndex((prev) => (prev + 1) % messages.length);
-    }, 6000);
-
-    return () => clearInterval(timer);
-  }, [messages.length]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-white">
-        <div className="relative mx-4 md:mx-8 lg:mx-12 mt-4 h-[66vh] min-h-[600px] bg-black overflow-hidden rounded-[2.5rem] md:rounded-[3rem] shadow-2xl animate-pulse" />
+        <div className="relative h-[66vh] min-h-[600px] bg-black overflow-hidden shadow-2xl animate-pulse" />
       </div>
     );
   }
@@ -35,7 +23,7 @@ export default function Home() {
   if (error || messages.length === 0) {
     return (
       <div className="min-h-screen bg-white">
-        <div className="relative mx-4 md:mx-8 lg:mx-12 mt-4 h-[66vh] min-h-[600px] bg-black overflow-hidden rounded-[2.5rem] md:rounded-[3rem] shadow-2xl flex items-center justify-center">
+        <div className="relative h-[66vh] min-h-[600px] bg-black overflow-hidden shadow-2xl flex items-center justify-center">
           <p className="text-white text-xl">Failed to load content</p>
         </div>
       </div>
@@ -45,119 +33,74 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="relative mx-4 md:mx-8 lg:mx-12 mt-4 h-[66vh] min-h-[600px] bg-black overflow-hidden rounded-[2.5rem] md:rounded-[3rem] shadow-2xl">
-        {/* Background Image with Overlay */}
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={currentMessageIndex}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
-            className="absolute inset-0 w-full h-full rounded-[2.5rem] md:rounded-[3rem] overflow-hidden"
+      <div className="relative h-screen bg-black overflow-hidden shadow-2xl">
+        {/* Watermark Text */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none select-none">
+          <div 
+            className="absolute inset-0 flex items-center justify-center transform -rotate-12"
+            style={{ mixBlendMode: 'soft-light' }}
           >
-            <motion.div
-              className="absolute inset-0 w-full h-full"
-              initial={{ scale: 1.1 }}
-              animate={{ scale: 1 }}
-              transition={{ duration: 12, ease: "linear" }}
+            <span 
+              className="text-[20vw] font-black text-white opacity-[0.07] whitespace-nowrap tracking-tighter"
+              style={{ 
+                textShadow: '0 0 100px rgba(255,255,255,0.1)',
+                fontFamily: 'sans-serif',
+                letterSpacing: '-0.05em'
+              }}
             >
-              <img 
-                src={messages[currentMessageIndex].background}
-                alt="Background"
-                className="w-full h-full object-cover opacity-50"
-              />
-              <div className="absolute inset-0 bg-black/60" />
-            </motion.div>
-          </motion.div>
-        </AnimatePresence>
+              BRILLIANT
+            </span>
+          </div>
+        </div>
 
-        {/* Gradient Layers */}
-        <motion.div 
-          key={`gradient-${currentMessageIndex}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.9 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.8 }}
-          className="absolute inset-0 w-full h-full animate-gradient rounded-[2.5rem] md:rounded-[3rem] overflow-hidden"
-          style={{
-            background: 'url("/Brilliant Gradient Pack-07.jpg") no-repeat center center',
-            backgroundSize: '150% 150%',
-            clipPath: 'polygon(0 0, 100% 0, 85% 100%, 0% 100%)',
-            filter: 'blur(80px) saturate(140%)',
-            transform: 'scale(1.2)'
-          }}
-        />
-        <motion.div 
-          key={`gradient-reverse-${currentMessageIndex}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.95 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.8 }}
-          className="absolute inset-0 w-full h-full animate-gradient-reverse rounded-[2.5rem] md:rounded-[3rem] overflow-hidden"
-          style={{
-            background: 'url("/Brilliant Gradient Pack-07.jpg") no-repeat center center',
-            backgroundSize: '150% 150%',
-            clipPath: 'polygon(15% 0, 100% 0, 100% 100%, 0% 100%)',
-          }}
-        />
-        
-        {/* Animated Shapes - Minimal */}
+        {/* Background with Gradient */}
         <div className="absolute inset-0 w-full h-full overflow-hidden">
-          <div className="absolute w-[400px] h-[400px] rounded-full bg-white/5 -top-[100px] -right-[100px] blur-3xl animate-pulse" 
-               style={{ animationDuration: '4s' }} />
+          {/* Base gradient layer */}
+          <div 
+            className="absolute inset-0 animate-gradient-move"
+            style={{
+              background: 'url("/Brilliant Gradient Pack-07.png")',
+              opacity: 0.9,
+              mixBlendMode: 'normal'
+            }}
+          />
+          
+          {/* Overlay gradient layer 1 */}
+          <div 
+            className="absolute inset-0 bg-gradient-to-br from-black/20 via-transparent to-black/20"
+            style={{ mixBlendMode: 'overlay' }}
+          />
+
+          {/* Overlay gradient layer 2 */}
+          <div 
+            className="absolute inset-0 bg-gradient-to-tr from-purple-900/10 via-transparent to-purple-900/10"
+            style={{ mixBlendMode: 'color' }}
+          />
+
+          {/* Subtle light overlay */}
+          <div 
+            className="absolute inset-0"
+            style={{
+              background: 'radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%)',
+              mixBlendMode: 'overlay'
+            }}
+          />
         </div>
 
         {/* Content */}
         <div className="relative h-full flex items-center justify-center max-w-7xl mx-auto px-4 md:px-8">
-          <div className="text-center flex flex-col items-center justify-center gap-12">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={currentMessageIndex}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ 
-                  duration: 0.8,
-                  ease: "easeOut"
-                }}
-                className="flex flex-col items-center"
-              >
-                <h1>
-                  <span 
-                    className="block text-[8rem] font-bold tracking-tight text-white leading-none mb-6"
-                    style={{
-                      textShadow: '0 0 60px rgba(255,255,255,0.15)'
-                    }}
-                  >
-                    {messages[currentMessageIndex].title}
-                  </span>
-                </h1>
-                <motion.p 
-                  className="text-base md:text-lg font-light leading-relaxed text-white/90 max-w-xl text-center"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.1, duration: 0.2 }}
+          <div className="text-center flex flex-col items-center justify-center gap-12 -mt-20">
+            <div className="flex flex-col items-center">
+              <h1>
+                <span 
+                  className="block text-[4.5rem] md:text-[5.5rem] font-bold tracking-tight text-white leading-[1.1] mb-6 max-w-[14ch]"
+                  style={{
+                    textShadow: '0 0 60px rgba(255,255,255,0.15)'
+                  }}
                 >
-                  {messages[currentMessageIndex].subtitle}
-                </motion.p>
-              </motion.div>
-            </AnimatePresence>
-
-            {/* Carousel Navigation Dots */}
-            <div className="flex justify-center space-x-2">
-              {messages.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentMessageIndex(index)}
-                  className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                    currentMessageIndex === index 
-                      ? 'bg-white w-6'
-                      : 'bg-white/50 hover:bg-white/70'
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
+                  Discover God's extraordinary ways of being with you
+                </span>
+              </h1>
             </div>
 
             <div className="flex justify-center gap-4">
@@ -193,14 +136,6 @@ export default function Home() {
                 <span className="text-sm font-medium">VIRTUAL</span>
               </div>
             </div>
-          </div>
-        </div>
-
-        {/* Refined Scroll Indicator */}
-        <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2">
-          <div className="w-[26px] h-[42px] rounded-full border-2 border-white/20 flex items-start justify-center p-2">
-            <div className="w-1 h-2 bg-white/40 rounded-full animate-bounce" 
-                 style={{ animationDuration: '1.5s' }} />
           </div>
         </div>
       </div>
